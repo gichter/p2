@@ -5,13 +5,30 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import os
 
-os.remove('book.csv')
+# os.remove('book.csv')
 
-url = "http://books.toscrape.com/catalogue/how-to-be-miserable-40-strategies-you-already-use_897/index.html"
+url = "http://books.toscrape.com/catalogue/category/books/mystery_3/index.html"
 
 
 response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
 
+books = soup.findAll('li', {'class': 'col-xs-6 col-sm-4 col-md-3 col-lg-3'})
+
+for b in books:
+    for a in b.select("h3 a"):
+        print("http://books.toscrape.com/catalogue/" + a.get('href')[9:])
+
+
+
+
+""" categories = soup.find('ul', {'class': 'nav-list'})
+
+for a in categories.select("li a"):
+    print("http://books.toscrape.com/" + a.get('href'))
+
+"""
+""" 
 soup = BeautifulSoup(response.text, 'html.parser')
 tds = soup.findAll('td')
 title = soup.find('h1')
@@ -42,3 +59,4 @@ with open('book.csv', newline='') as f:
     reader = csv.reader(f)
     for row in reader:
         print(row)
+"""
