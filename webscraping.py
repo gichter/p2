@@ -15,8 +15,8 @@ number_available = re.search(r'\d+', tds[5].text).group(0) ### searching the num
 category = soup.findAll('a')[3].text
 rating = soup.findAll('p')[2] ### TODO
 image_url = "http://books.toscrape.com/" + soup.findAll('img')[0]['src'][6:] ### concatenating base url and image relative url
+rating = soup.find('p', {'class': 'star-rating'})['class'][1] ### Looking for the star-rating class, and extracting the second class attribute (star rating 1-5)
 
-print()
 
 book = {
     "product_page_url": url,
@@ -27,13 +27,13 @@ book = {
     "number_available": number_available,
     "product_description": description,
     "category": category,
-    "review_rating": "",
+    "review_rating": rating,
     "image_url": image_url,
 }
 
-print(book)
 
-###
+
+###print(book)
 ### print(len(tds))
 ### print(tds)
 ###
