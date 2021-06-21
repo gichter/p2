@@ -1,6 +1,11 @@
 import requests
 import re
+import csv
+import pandas as pd
 from bs4 import BeautifulSoup
+import os
+
+os.remove('book.csv')
 
 url = "http://books.toscrape.com/catalogue/how-to-be-miserable-40-strategies-you-already-use_897/index.html"
 
@@ -18,22 +23,22 @@ image_url = "http://books.toscrape.com/" + soup.findAll('img')[0]['src'][6:] ###
 rating = soup.find('p', {'class': 'star-rating'})['class'][1] ### Looking for the star-rating class, and extracting the second class attribute (star rating 1-5)
 
 
-book = {
-    "product_page_url": url,
-    "universal_product_code (upc)": tds[0].text,
-    "title": title.text,
-    "price_including_tax": tds[3].text[1:],
-    "price_excluding_tax": tds[2].text[1:],
-    "number_available": number_available,
-    "product_description": description,
-    "category": category,
-    "review_rating": rating,
-    "image_url": image_url,
-}
+df = pd.DataFrame(list())
+df.to_csv('book.csv')
+
+header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax", "number_available",
+    "product_description", "category", "review_rating", "image_url"]
+
+book = [ url, tds[0].text, title.text, tds[3].text[1:], tds[2].text[1:], number_available, description, category, rating, image_url ]
 
 
+with open('book.csv', 'w', encoding='UTF8') as f:
+    writer = csv.writer(f)
+    writer.writerow(header)
+    writer.writerow(book)
 
-###print(book)
-### print(len(tds))
-### print(tds)
-###
+
+with open('book.csv', newline='') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print(row)
