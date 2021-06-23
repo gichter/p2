@@ -3,10 +3,19 @@ import re
 import csv
 import pandas as pd
 from bs4 import BeautifulSoup
-import os
+import os, shutil, pathlib
 import math
 
 book_total_number = 0
+
+main_folder = 'Book Data'
+
+if os.path.exists(main_folder):
+    print("exists")
+    shutil.rmtree(main_folder)
+
+os.mkdir(main_folder)
+
 
 response = requests.get("http://books.toscrape.com/")
 soup = BeautifulSoup(response.content, 'html.parser')
@@ -16,7 +25,7 @@ for a in categories.select("li a"):
     url = "http://books.toscrape.com/" + a.get('href')
     category_name = url[51:].split("_")[0]
     if(category_name != "1/index.html"):
-        
+        pathlib.Path(main_folder + '/' + category_name).mkdir(parents=True, exist_ok=True) 
         print (category_name)
 
         response = requests.get(url)
@@ -28,7 +37,7 @@ for a in categories.select("li a"):
         header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax", "number_available",
             "product_description", "category", "review_rating", "image_url"]
 
-        with open(category_name + '.csv', 'w', encoding='UTF8') as f:
+        with open(main_folder + '/' + category_name + '/' + category_name + '.csv', 'w', encoding='UTF8') as f:
             writer = csv.writer(f)
             writer.writerow(header)
         while number_of_pages > 0:
@@ -38,7 +47,6 @@ for a in categories.select("li a"):
                 response = requests.get(url[:-10] + "page-" + str(number_of_pages) + ".html")
             soup = BeautifulSoup(response.content, 'html.parser')
             books = soup.findAll('li', {'class': 'col-xs-6 col-sm-4 col-md-3 col-lg-3'})
-            #print(url + 'page-' + str(number_of_pages) + '.html')
             number_of_pages -= 1
 
             for b in books:
@@ -55,12 +63,21 @@ for a in categories.select("li a"):
                     image_url = "http://books.toscrape.com/" + soup.findAll('img')[0]['src'][6:] ### concatenating base url and image relative url
                     rating = soup.find('p', {'class': 'star-rating'})['class'][1] ### Looking for the star-rating class, and extracting the second class attribute (star rating 1-5)
                     
-                    book = [ book_url, tds[0].text, title.text, tds[3].text[1:], tds[2].text[1:], number_available, description, category, rating, image_url ]
-                    with open(category_name + '.csv', 'a', encoding='UTF8') as f:
+                    
+                    image_reference = (title.text + "_image.jpg")
+
+
+                    
+                    book = [ book_url, tds[0].text, title.text, tds[3].text[1:], tds[2].text[1:], number_available, description, category, rating, image_url, image_reference ]
+                    with open(main_folder + '/' +category_name + '/' + category_name + '.csv', 'a', encoding='UTF8') as f:
                         writer = csv.writer(f)
                         writer.writerow(book)
                         print(title.text)
                         book_total_number += 1
+                    
+                    img_data = requests.get(image_url).content
+                    with open(main_folder + '/' +category_name + '/' + image_reference, 'wb') as handler:
+                        handler.write(img_data)
 
 
 print("Nombre total de livres récupérés :" + str(book_total_number))
