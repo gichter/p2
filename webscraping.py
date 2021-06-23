@@ -9,7 +9,6 @@ book_total_number = 0
 main_folder = 'Book Data'
 
 if os.path.exists(main_folder):
-    print("exists")
     shutil.rmtree(main_folder)
 os.mkdir(main_folder)
 
@@ -22,7 +21,7 @@ for a in categories.select("li a"):
     category_name = url[51:].split("_")[0]
     if(category_name != "1/index.html"):
         pathlib.Path(main_folder + '/' + category_name).mkdir(parents=True, exist_ok=True) 
-        print (category_name)
+        print ('Scraping de la catégorie "' + category_name + '"')
         response = requests.get(url)
         soup = BeautifulSoup(response.content, 'html.parser')
         pages = soup.findAll('strong')
