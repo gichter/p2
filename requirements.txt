@@ -39,7 +39,6 @@ notify2==0.3
 numpy==1.17.4
 oauthlib==3.1.0
 olefile==0.46
-pandas==1.2.4
 paramiko==2.6.0
 pexpect==4.6.0
 Pillow==7.0.0
