@@ -9,7 +9,7 @@ import math
 book_total_number = 0
 
 response = requests.get("http://books.toscrape.com/")
-soup = BeautifulSoup(response.text, 'html.parser')
+soup = BeautifulSoup(response.content, 'html.parser')
 categories = soup.find('ul', {'class': 'nav-list'})
 
 for a in categories.select("li a"):
@@ -20,7 +20,7 @@ for a in categories.select("li a"):
         print (category_name)
 
         response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser')
+        soup = BeautifulSoup(response.content, 'html.parser')
 
         pages = soup.findAll('strong')
         number_of_pages = (math.ceil(int(pages[1].text)/20)) # Nombre de pages dans une catégorie
@@ -36,7 +36,7 @@ for a in categories.select("li a"):
                 response = requests.get(url)
             else:
                 response = requests.get(url[:-10] + "page-" + str(number_of_pages) + ".html")
-            soup = BeautifulSoup(response.text, 'html.parser')
+            soup = BeautifulSoup(response.content, 'html.parser')
             books = soup.findAll('li', {'class': 'col-xs-6 col-sm-4 col-md-3 col-lg-3'})
             #print(url + 'page-' + str(number_of_pages) + '.html')
             number_of_pages -= 1
@@ -45,7 +45,7 @@ for a in categories.select("li a"):
                 for a in b.select("h3 a"): 
                     book_url = "http://books.toscrape.com/catalogue/" + a.get('href')[9:]
                     response = requests.get(book_url)
-                    soup = BeautifulSoup(response.text, 'html.parser')
+                    soup = BeautifulSoup(response.content, 'html.parser')
                     tds = soup.findAll('td')
                     title = soup.find('h1')
                     description = soup.findAll('p')[3].text
@@ -64,6 +64,25 @@ for a in categories.select("li a"):
 
 
 print("Nombre total de livres récupérés :" + str(book_total_number))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """ 
     print("http://books.toscrape.com/" + a.get('href'))
 
