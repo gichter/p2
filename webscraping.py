@@ -5,7 +5,19 @@ from bs4 import BeautifulSoup
 import os, shutil, pathlib
 import math
 
+def fetch_url(url):
+    r = requests.get(url)
+    return BeautifulSoup(r.content, 'html.parser')
 
+def draw_progressbar (number, total):
+    progress_bar = '[{0}{1}] {2}%'
+    percentage_progress = math.floor(number * 100/total)
+    print(progress_bar.format('#' * percentage_progress, '-' * (100 - percentage_progress), percentage_progress))
+
+def display_scraping_advancement(category, book):
+    os.system('clear')
+    print ('Scraping de la catégorie "' + category + ' livres)\n')
+    print(book + '\n')
 
 print('Lancement du scraping...')
 
@@ -18,19 +30,16 @@ if os.path.exists(main_folder):
 os.mkdir(main_folder)
 
 url = "http://books.toscrape.com/" 
-response = requests.get(url)
-soup = BeautifulSoup(response.content, 'html.parser')
+soup = (fetch_url(url))
 categories = soup.find('ul', {'class': 'nav-list'})
 books_max_number = int(soup.findAll('strong')[0].text)
-
 
 for a in categories.select("li a"):
     url = "http://books.toscrape.com/" + a.get('href')
     category_name = url[51:].split("_")[0]
     if(category_name != "1/index.html"):
         pathlib.Path(main_folder + '/' + category_name).mkdir(parents=True, exist_ok=True) 
-        response = requests.get(url)
-        soup = BeautifulSoup(response.content, 'html.parser')
+        soup = (fetch_url(url))
         pages = soup.findAll('strong')
         number_of_pages = (math.ceil(int(pages[1].text)/20)) # Nombre de pages dans une catégorie
         header = ["product_page_url", "universal_product_code (upc)", "title", "price_including_tax", "price_excluding_tax", "number_available",
@@ -40,10 +49,9 @@ for a in categories.select("li a"):
             writer.writerow(header)
         while number_of_pages > 0:
             if(number_of_pages == 1):
-                response = requests.get(url)
+                soup = (fetch_url(url))
             else:
-                response = requests.get(url[:-10] + "page-" + str(number_of_pages) + ".html")
-            soup = BeautifulSoup(response.content, 'html.parser')
+                soup = (fetch_url(url[:-10] + "page-" + str(number_of_pages) + ".html"))
             books = soup.findAll('li', {'class': 'col-xs-6 col-sm-4 col-md-3 col-lg-3'})
             number_of_pages -= 1
             number_of_category_books = 0
@@ -52,8 +60,7 @@ for a in categories.select("li a"):
                 number_of_category_books += 1
                 for a in b.select("h3 a"): 
                     book_url = "http://books.toscrape.com/catalogue/" + a.get('href')[9:]
-                    response = requests.get(book_url)
-                    soup = BeautifulSoup(response.content, 'html.parser')
+                    soup = fetch_url(book_url)
                     tds = soup.findAll('td')
                     title = soup.find('h1')
                     description = soup.findAll('p')[3].text
@@ -73,16 +80,9 @@ for a in categories.select("li a"):
                     with open(main_folder + '/' + category_name + '/' + image_reference, 'wb') as handler:
                         handler.write(img_data)
                     
-                    os.system('clear')
-                    print ('Scraping de la catégorie "' + category_name + '" (' + pages[1].text + ' livres)\n')
-                    print(title.text + '\n')
-
-                    category_progress_bar = '[{0}{1}] {2}%\n'
-                    category_progress = math.floor(number_of_category_books * 100/total_number_of_category_books)
-                    print(category_progress_bar.format('#' * category_progress, '-' * (100 - category_progress), category_progress))
-
-                    progress_bar = '[{0}{1}] {2}%'
-                    total_progress = math.floor(book_total_number * 100/books_max_number)
-                    print(progress_bar.format('#' * total_progress, '-' * (100 - total_progress), total_progress))
+                    display_scraping_advancement((category_name + '" (' + pages[1].text), title.text)
+                    
+                    draw_progressbar(number_of_category_books, total_number_of_category_books)
+                    draw_progressbar(book_total_number, books_max_number)
 
 print("Nombre total de livres récupérés :" + str(book_total_number))
