@@ -4,6 +4,11 @@ import csv
 from bs4 import BeautifulSoup
 import os, shutil, pathlib
 import math
+import datetime
+import aiohttp        
+import aiofiles
+
+begin_time = datetime.datetime.now()
 
 def fetch_url(url):
     r = requests.get(url)
@@ -47,6 +52,9 @@ for a in categories.select("li a"):
         with open(main_folder + '/' + category_name + '/' + category_name + '.csv', 'w', encoding='UTF8') as f:
             writer = csv.writer(f)
             writer.writerow(header)
+        
+        number_of_category_books = 0
+        total_number_of_category_books = int(pages[1].text)
         while number_of_pages > 0:
             if(number_of_pages == 1):
                 soup = (fetch_url(url))
@@ -54,8 +62,6 @@ for a in categories.select("li a"):
                 soup = (fetch_url(url[:-10] + "page-" + str(number_of_pages) + ".html"))
             books = soup.findAll('li', {'class': 'col-xs-6 col-sm-4 col-md-3 col-lg-3'})
             number_of_pages -= 1
-            number_of_category_books = 0
-            total_number_of_category_books = int(pages[1].text)
             for b in books:
                 number_of_category_books += 1
                 for a in b.select("h3 a"): 
@@ -78,11 +84,12 @@ for a in categories.select("li a"):
                         book_total_number += 1                    
                     img_data = requests.get(image_url).content
                     with open(main_folder + '/' + category_name + '/' + image_reference, 'wb') as handler:
-                        handler.write(img_data)
+                        handler.write(img_data) 
                     
                     display_scraping_advancement((category_name + '" (' + pages[1].text), title.text)
-                    
+                    print(number_of_category_books, total_number_of_category_books)
                     draw_progressbar(number_of_category_books, total_number_of_category_books)
                     draw_progressbar(book_total_number, books_max_number)
 
 print("Nombre total de livres récupérés :" + str(book_total_number))
+print("Temps d'execution du script : " + str(datetime.datetime.now() - begin_time))

@@ -1,5 +1,6 @@
 # p2
 # webscraping
+# python 3.8.5
 # 
 # - Clone the project
 # - Open the folder root in terminal
