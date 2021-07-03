@@ -34,3 +34,24 @@ Launch the script
 python3 webscraping.py
 ```
 ## Results
+
+/Book Data
+    /Category_1
+        /category_1.csv
+        /image_1.png
+        /image_2.png
+        /image_3.png
+        /image_n.png
+    /Category_2    
+        /category_2.csv
+        /image_1.png
+        /image_2.png
+        /image_3.png
+        /image_n.png
+    /Category_3
+        /category_3.csv
+        /image_1.png
+        /image_2.png
+        /image_3.png
+        /image_n.png
+    /Category_n
