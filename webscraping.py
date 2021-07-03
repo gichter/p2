@@ -6,7 +6,6 @@ import os, shutil, pathlib
 import math
 import datetime
 
-
 begin_time = datetime.datetime.now()
 
 def fetch_url(url):
@@ -23,6 +22,21 @@ def display_scraping_advancement(category, book):
     print ('Scraping de la catégorie "' + category + ' livres)\n')
     print(book + '\n')
 
+def get_book_data(a):
+    book_url = "http://books.toscrape.com/catalogue/" + a.get('href')[9:]
+    soup = fetch_url(book_url)
+    tds = soup.findAll('td')
+    title = soup.find('h1')
+    description = soup.findAll('p')[3].text
+    number_available = re.search(r'\d+', tds[5].text).group(0) ### searching the number in the string using regex
+    category = soup.findAll('a')[3].text
+    rating = soup.findAll('p')[2] ### TODO
+    image_url = "http://books.toscrape.com/" + soup.findAll('img')[0]['src'][6:] ### concatenating base url and image relative url
+    rating = soup.find('p', {'class': 'star-rating'})['class'][1] ### Looking for the star-rating class, and extracting the second class attribute (star rating 1-5)
+    image_reference = (title.text.replace('/', '_') + "_image.jpg")
+    
+    book = [ book_url, tds[0].text, title.text, tds[3].text[1:], tds[2].text[1:], number_available, description, category, rating, image_url, image_reference ]
+    return book
 
 print('Lancement du scraping...')
 
@@ -65,28 +79,16 @@ for a in categories.select("li a"):
             for b in books:
                 number_of_category_books += 1
                 for a in b.select("h3 a"): 
-                    book_url = "http://books.toscrape.com/catalogue/" + a.get('href')[9:]
-                    soup = fetch_url(book_url)
-                    tds = soup.findAll('td')
-                    title = soup.find('h1')
-                    description = soup.findAll('p')[3].text
-                    number_available = re.search(r'\d+', tds[5].text).group(0) ### searching the number in the string using regex
-                    category = soup.findAll('a')[3].text
-                    rating = soup.findAll('p')[2] ### TODO
-                    image_url = "http://books.toscrape.com/" + soup.findAll('img')[0]['src'][6:] ### concatenating base url and image relative url
-                    rating = soup.find('p', {'class': 'star-rating'})['class'][1] ### Looking for the star-rating class, and extracting the second class attribute (star rating 1-5)
-                    image_reference = (title.text.replace('/', '_') + "_image.jpg")
-                    
-                    book = [ book_url, tds[0].text, title.text, tds[3].text[1:], tds[2].text[1:], number_available, description, category, rating, image_url, image_reference ]
+                    book = get_book_data(a)
                     with open(main_folder + '/' + category_name + '/' + category_name + '.csv', 'a', encoding='UTF8') as f:
                         writer = csv.writer(f)
                         writer.writerow(book)
                         book_total_number += 1               
-                    img_data = requests.get(image_url).content
-                    with open(main_folder + '/' + category_name + '/' + image_reference, 'wb') as handler:
+                    img_data = requests.get(book[9]).content
+                    with open(main_folder + '/' + category_name + '/' + book[10], 'wb') as handler:
                         handler.write(img_data) 
                     
-                    display_scraping_advancement((category_name + '" (' + pages[1].text), title.text)
+                    display_scraping_advancement((category_name + '" (' + pages[1].text), book[2])
                     draw_progressbar(number_of_category_books, total_number_of_category_books)
                     draw_progressbar(book_total_number, books_max_number)
 
