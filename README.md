@@ -35,6 +35,7 @@ python3 webscraping.py
 ```
 ## Results
 
+```bash
 /Book Data
     /Category_1
         /category_1.csv
@@ -55,3 +56,4 @@ python3 webscraping.py
         /image_3.png
         /image_n.png
     /Category_n
+```
