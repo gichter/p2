@@ -1,3 +1,14 @@
+
+Basic Usage
+-----------
+
+Install with pip:
+
+.. code:: bash
+
+    pip install Faker
+
+
 # p2
 # webscraping
 # python 3.8.5
