@@ -5,8 +5,7 @@ from bs4 import BeautifulSoup
 import os, shutil, pathlib
 import math
 import datetime
-import aiohttp        
-import aiofiles
+
 
 begin_time = datetime.datetime.now()
 
@@ -23,6 +22,7 @@ def display_scraping_advancement(category, book):
     os.system('clear')
     print ('Scraping de la catégorie "' + category + ' livres)\n')
     print(book + '\n')
+
 
 print('Lancement du scraping...')
 
@@ -81,7 +81,7 @@ for a in categories.select("li a"):
                     with open(main_folder + '/' + category_name + '/' + category_name + '.csv', 'a', encoding='UTF8') as f:
                         writer = csv.writer(f)
                         writer.writerow(book)
-                        book_total_number += 1                    
+                        book_total_number += 1               
                     img_data = requests.get(image_url).content
                     with open(main_folder + '/' + category_name + '/' + image_reference, 'wb') as handler:
                         handler.write(img_data) 
