@@ -87,7 +87,6 @@ for a in categories.select("li a"):
                         handler.write(img_data) 
                     
                     display_scraping_advancement((category_name + '" (' + pages[1].text), title.text)
-                    print(number_of_category_books, total_number_of_category_books)
                     draw_progressbar(number_of_category_books, total_number_of_category_books)
                     draw_progressbar(book_total_number, books_max_number)
 
