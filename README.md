@@ -1,35 +1,36 @@
 
-Basic Usage
------------
+# Webscraping project
 
-Install with pip:
+This project is a webscraping project using python and BeautifulSoup 4 to scrape books data.
 
-.. code:: bash
+## Installation
 
-    pip install Faker
+clone the project using GitHub CLI
 
+```bash
+gh repo clone gichter/p2
+```
 
-# p2
-# webscraping
-# python 3.8.5
-# 
-# - Clone the project
-# - Open the folder root in terminal
-# - enter the following commands 
-#     - python3 -m venv env                               #virtual env creation
-#     - source env/bin/activate                           #virtual env activation
-#     - pip install -r requirements.txt                   #download dependencies
-#     - python3 webscraping.py                             #launch the webscraping script
-# 
-# 
-# You will get the following data :
-# 
-#     - Book Data
-#         - category_name_1
-#             - category_name_1.csv
-#             - all cover images from the books, referenced in the csv file
-#         - category_name_2
-#             - category_name_2.csv
-#             - all cover images from the books, referenced in the csv file
-#         - category_name_3 
-#             -...
+Open a terminal in the root folder, then create a new virtual environment
+
+```bash
+python3 -m venv env
+```
+
+Activate the virtual environment
+```bash
+source env/bin/activate
+```
+
+Use the packet manager [pip](https://pip.pypa.io/en/stable/) to install the project dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Launch the script
+
+```bash
+python3 webscraping.py
+```
+## Results
