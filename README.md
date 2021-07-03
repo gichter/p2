@@ -1,7 +1,7 @@
 
 # Webscraping project
 
-This project is a webscraping project using python and BeautifulSoup 4 to scrape books data.
+This project is a webscraping project using python3 and BeautifulSoup4 to scrape books data.
 
 ## Installation
 
