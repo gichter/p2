@@ -35,6 +35,8 @@ python3 webscraping.py
 ```
 ## Results
 
+Results folder will appear in the root folder
+
 ```bash
 /Book Data
     /Category_1
